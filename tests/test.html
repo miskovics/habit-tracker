@@ -2,6 +2,7 @@
 <html><head><meta charset="UTF-8"></head>
 <body>
   <main>
+    <button id="theme-toggle"></button>
     <button id="new-day">New day</button>
     <ul id="habits"></ul>
     <input id="new-title" type="text" hidden>
@@ -29,6 +30,18 @@ function add(text) { $('new-habit').click(); $('new-title').value = text; enter(
 
 function run1() {
   check('no habits at start', rows().length === 0);
+
+  const systemDark = matchMedia('(prefers-color-scheme: dark)').matches;
+  check('theme follows system at start', !document.documentElement.dataset.theme);
+  check('toggle offers opposite of system', $('theme-toggle').textContent === (systemDark ? 'Light mode' : 'Dark mode'));
+  $('theme-toggle').click();
+  const flipped = systemDark ? 'light' : 'dark';
+  check('toggle overrides system theme', document.documentElement.dataset.theme === flipped);
+  check('theme choice saved', localStorage.getItem('theme') === flipped);
+  check('toggle label updates', $('theme-toggle').textContent === (systemDark ? 'Dark mode' : 'Light mode'));
+  $('theme-toggle').click();
+  check('toggle switches back', document.documentElement.dataset.theme === (systemDark ? 'dark' : 'light'));
+  $('theme-toggle').click();
   check('input hidden at start', $('new-title').hidden);
 
   $('new-habit').click();
@@ -84,6 +97,8 @@ function run1() {
 }
 
 function run2() {
+  const systemDark = matchMedia('(prefers-color-scheme: dark)').matches;
+  check('theme choice persists across sessions', document.documentElement.dataset.theme === (systemDark ? 'light' : 'dark'));
   check('habits persist across sessions', JSON.stringify(titles()) === JSON.stringify(['Drink water', 'Stretch']));
   check('status persists across sessions', rows()[1].querySelector('input').checked && !rows()[0].querySelector('input').checked);
 }

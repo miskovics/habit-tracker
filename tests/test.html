@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"></head>
+<body>
+  <main>
+    <button id="new-day">New day</button>
+    <ul id="habits"></ul>
+    <input id="new-title" type="text" hidden>
+    <button id="new-habit">New habit</button>
+  </main>
+  <pre id="results"></pre>
+<script>
+if (!navigator.userAgent.includes("HeadlessChrome")) throw document.getElementById("results").textContent = "Run tests/run.sh instead. Opening this page in Chrome would erase your saved habits.";
+const phase = new URLSearchParams(location.search).get('phase');
+const out = [];
+const check = (name, ok) => out.push((ok ? 'PASS ' : 'FAIL ') + name);
+if (phase === '1') localStorage.clear();
+
+const s = document.createElement('script');
+s.src = '../app.js';
+s.onload = () => { try { phase === '1' ? run1() : run2(); } catch (e) { out.push('ERROR ' + e); } document.getElementById('results').textContent = out.join('\n'); };
+document.body.append(s);
+
+const $ = id => document.getElementById(id);
+const rows = () => [...document.querySelectorAll('#habits li')];
+const titles = () => rows().map(r => r.querySelector('.title').textContent);
+const stored = () => JSON.parse(localStorage.getItem('habits'));
+const enter = (opts = {}) => $('new-title').dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, ...opts }));
+function add(text) { $('new-habit').click(); $('new-title').value = text; enter(); }
+
+function run1() {
+  check('no habits at start', rows().length === 0);
+  check('input hidden at start', $('new-title').hidden);
+
+  $('new-habit').click();
+  check('New habit shows input', !$('new-title').hidden);
+  check('input focused', document.activeElement === $('new-title'));
+
+  $('new-title').value = '   ';
+  enter();
+  check('whitespace-only title not saved', rows().length === 0);
+  check('input stays visible after rejected save', !$('new-title').hidden);
+
+  $('new-title').value = '日本';
+  enter({ isComposing: true });
+  check('Enter ignored during IME composition', rows().length === 0);
+
+  $('new-title').value = '  Drink water  ';
+  $('new-title').dispatchEvent(new KeyboardEvent('keydown', { key: 'a', bubbles: true }));
+  check('non-Enter key does not save', rows().length === 0);
+  enter();
+  check('Enter saves habit', rows().length === 1);
+  check('title trimmed', titles()[0] === 'Drink water');
+  check('new habit INCOMPLETE', stored()[0].status === 'INCOMPLETE' && !rows()[0].querySelector('input').checked);
+  check('input hidden after save', $('new-title').hidden);
+  check('input cleared after save', $('new-title').value === '');
+
+  add('Read 📚 日本語 ñ');
+  add('<b>Run</b>');
+  check('creation order', JSON.stringify(titles()) === JSON.stringify(['Drink water', 'Read 📚 日本語 ñ', '<b>Run</b>']));
+  check('Unicode preserved', stored()[1].title === 'Read 📚 日本語 ñ');
+  check('HTML rendered as text, not markup', !rows()[2].querySelector('b'));
+
+  const cb = rows()[0].querySelector('input[type=checkbox]');
+  cb.click();
+  check('checkbox marks COMPLETE', stored()[0].status === 'COMPLETE');
+  cb.click();
+  check('checkbox unmarks INCOMPLETE', stored()[0].status === 'INCOMPLETE');
+
+  rows()[0].querySelector('input').click();
+  rows()[1].querySelector('input').click();
+  $('new-day').click();
+  check('New day resets all to INCOMPLETE', stored().every(h => h.status === 'INCOMPLETE'));
+  check('New day unchecks all boxes', rows().every(r => !r.querySelector('input').checked));
+
+  rows()[1].querySelector('.delete').click();
+  check('delete removes middle habit', JSON.stringify(titles()) === JSON.stringify(['Drink water', '<b>Run</b>']));
+  check('delete persisted', stored().length === 2);
+  rows()[1].querySelector('.delete').click();
+  check('delete after re-render uses correct index', JSON.stringify(titles()) === JSON.stringify(['Drink water']));
+
+  add('Stretch');
+  rows()[1].querySelector('input').click();
+  check('state left for phase 2', stored().length === 2 && stored()[1].status === 'COMPLETE');
+}
+
+function run2() {
+  check('habits persist across sessions', JSON.stringify(titles()) === JSON.stringify(['Drink water', 'Stretch']));
+  check('status persists across sessions', rows()[1].querySelector('input').checked && !rows()[0].querySelector('input').checked);
+}
+</script>
+</body></html>

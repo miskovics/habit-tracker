@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "f=$(jq -r \".tool_input.file_path // empty\"); case \"$f\" in \"$CLAUDE_PROJECT_DIR\"/app.js|\"$CLAUDE_PROJECT_DIR\"/index.html|\"$CLAUDE_PROJECT_DIR\"/style.css|\"$CLAUDE_PROJECT_DIR\"/tests/*) out=$(\"$CLAUDE_PROJECT_DIR\"/tests/run.sh 2>&1) || { echo \"Tests failed:\" >&2; echo \"$out\" | grep -v \"^PASS\" >&2; exit 2; } ;; esac",
+            "timeout": 60,
+            "statusMessage": "Running tests..."
+          }
+        ]
+      }
+    ]
+  }
+}

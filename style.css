@@ -1,0 +1,52 @@
+body {
+  font-family: system-ui, sans-serif;
+  margin: 0;
+  padding: 24px 16px;
+}
+
+main {
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+button {
+  padding: 8px 12px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+#habits {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#habits li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+#habits .title {
+  flex: 1;
+  overflow-wrap: anywhere;
+}
+
+#habits .delete {
+  padding: 2px 8px;
+  font-size: 0.8rem;
+}
+
+#new-title {
+  padding: 8px;
+  font-size: 1rem;
+}

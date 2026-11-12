@@ -1,4 +1,7 @@
 body {
+  color-scheme: dark;
+  background: #000;
+  color: #fff;
   font-family: system-ui, sans-serif;
   margin: 0;
   padding: 24px 16px;
@@ -33,7 +36,7 @@ button {
   align-items: center;
   gap: 8px;
   padding: 6px 0;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #222;
 }
 
 #habits .title {

@@ -25,6 +25,7 @@ Open `index.html` in Chrome. No server needed.
 - Each habit has a title (Unicode text) and a status (`COMPLETE` or `INCOMPLETE`).
 - Habits persist in `localStorage` between browser sessions.
 - There are no habits at start.
+- Page says HABIT TRACKER on top, in large text.
 
 ### Layout
 - **Top:** [New day] button. Resets every habit to `INCOMPLETE`.

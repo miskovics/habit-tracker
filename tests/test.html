@@ -27,6 +27,8 @@ const titles = () => rows().map(r => r.querySelector('.title').textContent);
 const stored = () => JSON.parse(localStorage.getItem('habits'));
 const enter = (opts = {}) => $('new-title').dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, ...opts }));
 function add(text) { $('new-habit').click(); $('new-title').value = text; enter(); }
+// Fakes a system theme change on app.js's systemDark. Must stay top-level: run1 has its own systemDark.
+function osTheme(dark) { Object.defineProperty(systemDark, 'matches', { value: dark, configurable: true }); systemDark.dispatchEvent(new Event('change')); }
 
 function run1() {
   check('no habits at start', rows().length === 0);
@@ -34,6 +36,10 @@ function run1() {
   const systemDark = matchMedia('(prefers-color-scheme: dark)').matches;
   check('theme follows system at start', !document.documentElement.dataset.theme);
   check('toggle offers opposite of system', $('theme-toggle').textContent === (systemDark ? 'Light mode' : 'Dark mode'));
+  osTheme(!systemDark);
+  check('label follows live OS change', $('theme-toggle').textContent === (systemDark ? 'Dark mode' : 'Light mode') && !document.documentElement.dataset.theme);
+  osTheme(systemDark);
+  check('label follows OS change back', $('theme-toggle').textContent === (systemDark ? 'Light mode' : 'Dark mode'));
   $('theme-toggle').click();
   const flipped = systemDark ? 'light' : 'dark';
   check('toggle overrides system theme', document.documentElement.dataset.theme === flipped);
@@ -42,6 +48,9 @@ function run1() {
   $('theme-toggle').click();
   check('toggle switches back', document.documentElement.dataset.theme === (systemDark ? 'dark' : 'light'));
   $('theme-toggle').click();
+  osTheme(!systemDark);
+  check('override ignores OS change', document.documentElement.dataset.theme === flipped && $('theme-toggle').textContent === (systemDark ? 'Dark mode' : 'Light mode'));
+  osTheme(systemDark);
   check('input hidden at start', $('new-title').hidden);
 
   $('new-habit').click();

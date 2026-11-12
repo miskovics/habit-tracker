@@ -26,6 +26,9 @@ Open `index.html` in Chrome. No server needed.
 - Habits persist in `localStorage` between browser sessions.
 - There are no habits at start.
 - Page says HABIT TRACKER on top, in large text.
+- Dark mode follows the system light/dark setting by default.
+- A small theme button under the title overrides it. Its label names the theme it switches to.
+- The theme choice persists in `localStorage`.
 
 ### Layout
 - **Top:** [New day] button. Resets every habit to `INCOMPLETE`.

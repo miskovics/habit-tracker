@@ -1,11 +1,15 @@
 const STORAGE_KEY = 'habits';
+const THEME_KEY = 'theme';
 
 const list = document.getElementById('habits');
 const newDayButton = document.getElementById('new-day');
 const newHabitButton = document.getElementById('new-habit');
 const titleInput = document.getElementById('new-title');
+const themeButton = document.getElementById('theme-toggle');
+const systemDark = matchMedia('(prefers-color-scheme: dark)');
 
 let habits = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+let theme = localStorage.getItem(THEME_KEY);
 
 function save() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(habits));
@@ -64,4 +68,22 @@ titleInput.addEventListener('keydown', event => {
   titleInput.hidden = true;
 });
 
+function isDark() {
+  return theme ? theme === 'dark' : systemDark.matches;
+}
+
+function applyTheme() {
+  if (theme) document.documentElement.dataset.theme = theme;
+  themeButton.textContent = isDark() ? 'Light mode' : 'Dark mode';
+}
+
+themeButton.addEventListener('click', () => {
+  theme = isDark() ? 'light' : 'dark';
+  localStorage.setItem(THEME_KEY, theme);
+  applyTheme();
+});
+
+systemDark.addEventListener('change', applyTheme);
+
+applyTheme();
 render();

@@ -54,12 +54,22 @@ function run1() {
   check('new habit INCOMPLETE', stored()[0].status === 'INCOMPLETE' && !rows()[0].querySelector('input').checked);
   check('input hidden after save', $('new-title').hidden);
   check('input cleared after save', $('new-title').value === '');
+  check('new habit saved to storage at once', stored().length === 1 && stored()[0].title === 'Drink water');
+  check('new row has checkbox, title, delete', !!rows()[0].querySelector('input[type=checkbox]') && !!rows()[0].querySelector('.title') && !!rows()[0].querySelector('.delete'));
 
+  add('');
+  check('empty title not saved', rows().length === 1 && stored().length === 1);
+  add('\t\n　 ');
+  check('tab, newline, full-width space title not saved', rows().length === 1 && stored().length === 1);
+
+  rows()[0].querySelector('input').click();
   add('Read 📚 日本語 ñ');
   add('<b>Run</b>');
   check('creation order', JSON.stringify(titles()) === JSON.stringify(['Drink water', 'Read 📚 日本語 ñ', '<b>Run</b>']));
   check('Unicode preserved', stored()[1].title === 'Read 📚 日本語 ñ');
   check('HTML rendered as text, not markup', !rows()[2].querySelector('b'));
+  check('adding keeps existing status', stored()[0].status === 'COMPLETE' && rows()[0].querySelector('input').checked);
+  rows()[0].querySelector('input').click();
 
   const cb = rows()[0].querySelector('input[type=checkbox]');
   cb.click();

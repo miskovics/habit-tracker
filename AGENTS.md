@@ -8,8 +8,15 @@
 ## Running the app
 Open `index.html` in Chrome. No server needed.
 
+## Running the tests
+Run `tests/run.sh`. It loads `tests/test.html` in headless Chrome with a throwaway profile.
+Every line must start with `PASS`. The script exits non-zero otherwise.
+Don't open `tests/test.html` in your own Chrome. It would erase your saved habits.
+The tests don't load `style.css`. Check visual changes with a screenshot.
+
 ## Conventions
 - One file per concern: `index.html`, `style.css`, `app.js`
+- Tests live in `tests/`
 - Don't add any external libraries or packages without asking me first
 - Don't add any new pages — everything stays on one screen
 - Write in short sentences. One idea each
@@ -26,6 +33,7 @@ Open `index.html` in Chrome. No server needed.
 - Habits persist in `localStorage` between browser sessions.
 - There are no habits at start.
 - Page says HABIT TRACKER on top, in large text.
+- Black background, white text. Form controls are dark too.
 
 ### Layout
 - **Top:** [New day] button. Resets every habit to `INCOMPLETE`.

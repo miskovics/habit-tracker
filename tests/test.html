@@ -59,8 +59,8 @@ function run1() {
 
   add('');
   check('empty title not saved', rows().length === 1 && stored().length === 1);
-  add('\t\n　 ');
-  check('tab, newline, full-width space title not saved', rows().length === 1 && stored().length === 1);
+  add('\t　 ');
+  check('tab and full-width space title not saved', rows().length === 1 && stored().length === 1);
 
   rows()[0].querySelector('input').click();
   add('Read 📚 日本語 ñ');

@@ -1,1 +1,18 @@
+# OS files
 .DS_Store
+._*
+Thumbs.db
+Desktop.ini
+
+# Secrets
+.env
+.env.*
+
+# Claude Code personal settings
+.claude/settings.local.json
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*~
